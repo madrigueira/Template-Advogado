@@ -1,0 +1,27 @@
+// FONT
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+// COLORS
+$White: #fff;
+$Cyan: #4e7476;
+$LightCyan: #6da1ac;
+$VeryLightCyan: #e4f5f2;
+$Gray: #232323;
+$GreenZap: #6acd47;
+
+// VARIABLES
+@mixin DivFlex {
+  display: flex;
+  width: 1200px;
+  margin: auto;
+  padding: 0 30px;
+}
+
+// MAIN
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+  color: $Gray;
+}

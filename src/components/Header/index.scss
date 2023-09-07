@@ -1,0 +1,62 @@
+@import "../../";
+
+.Header {
+  display: flex;
+  background-color: $LightCyan;
+
+  header {
+    @include DivFlex;
+    justify-content: end;
+    align-items: center;
+    height: 100px;
+
+    h2 {
+      margin-right: auto;
+      color: $White;
+      font-size: 34px;
+      font-weight: 800;
+    }
+
+    nav {
+      display: flex;
+      gap: 60px;
+      margin-right: 90px;
+
+      a {
+        color: $White;
+        font-size: 16px;
+        font-weight: 400;
+        transition: 0.2s;
+        cursor: pointer;
+
+        &:hover {
+          color: $Gray;
+        }
+
+        &.active {
+          color: $White;
+          font-weight: 700;
+        }
+      }
+    }
+
+    .social-network {
+      display: flex;
+      gap: 15px;
+
+      img {
+        width: 25px;
+        filter: invert(1);
+        transition: 0.2s;
+
+        &:hover {
+          filter: invert(0.15);
+          transform: translateY(-3px);
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 900px) {
+}

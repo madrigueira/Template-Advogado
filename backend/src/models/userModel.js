@@ -31,7 +31,7 @@ const updateUserByEmail = async (email, newUser)=>{
 
   if (docs.length != 1) return false
 
-  await docs[0].ref.update(user)
+  await docs[0].ref.update(newUser)
 
   return true
 }

@@ -52,4 +52,27 @@ const login = async (email, password)=>{
   }
 }
 
-export default { createUser, login }
+const updateUser = async (email, userName)=>{
+  try {
+    const newEmail = conversions.toEmail(email)
+    const newName = conversions.toName(userName)
+
+    const newUser = {
+      name: newName,
+      date_update: admin.firestore.Timestamp.fromDate(new Date())
+    }
+
+    const updated = await userModel.updateUserByEmail(newEmail, newUser)
+
+    if (updated) {
+      return true
+    } else {
+      return false
+    }
+
+  } catch (error) {
+    console.log(`Erro ao atualizar usuário: ${error}`)
+  }
+}
+
+export default { createUser, login, updateUser }

@@ -1,6 +1,7 @@
 import { db } from '../config/database.js'
 
 const loginsRef = db.collection('users')
+const forgotPass = db.collection('forgotPass')
 
 const createUser = async (user)=>{
   const doc = await loginsRef.add(user)
@@ -36,8 +37,24 @@ const updateUserByEmail = async (email, newUser)=>{
   return true
 }
 
+const createForgotPass = async (forgot)=>{
+  const user = await loginsRef.where('email', '==', forgot.email).get()
+
+  if (!user) return false
+
+  const doc = await forgotPass.add({
+    email: forgot.email,
+    uuid: forgot.uuid,
+    code: forgot.code,
+    expire: forgot.expire
+  })
+
+  return doc.id
+}
+
 export default { 
   createUser, 
   getUserByEmail, 
-  updateUserByEmail 
+  updateUserByEmail,
+  createForgotPass
 }

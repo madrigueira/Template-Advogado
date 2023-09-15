@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperação de Senha</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            color: #777;
+        }
+        .code-container {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        #code {
+            font-size: 18px;
+            text-align: center;
+            margin: 10px 0;
+            padding: 5px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #copy-button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Recuperação de Senha</h1>
+        <p>Olá, {{ nome }},</p>
+        <p>Use o código abaixo para recuperar sua senha:</p>
+        <div class="code-container">
+            <div id="code">{{ code }}</div>
+            <button id="copy-button" onclick="copyCode()">Copiar Código</button>
+        </div>
+        <p>Se você não solicitou essa recuperação de senha, por favor, ignore este e-mail.</p>
+    </div>
+</body>
+</html>

@@ -1,9 +1,9 @@
 import { admin } from '../config/database.js'
 import conversions from '../utils/conversions/conversions.js'
-import userModel from '../models/userModel.js'
+import User from '../models/userModel.js'
+import forgotPassController from '../controllers/forgotPassController.js'
 
 import bcrypt from 'bcrypt'
-import { v4 as uuid } from 'uuid'
 
 import mailer from '../config/mailer.js'
 import hbs from 'handlebars'
@@ -19,15 +19,9 @@ const createUser = async (email, password, fullName)=>{
 
     const newPass = await bcrypt.hash(password, salt)
 
-    const user = {
-      email: newEmail,
-      password: newPass,
-      name: newName,
-      date_include: admin.firestore.Timestamp.fromDate(new Date()),
-      date_update: admin.firestore.Timestamp.fromDate(new Date())
-    }
+    const user = new User(newEmail, newPass, newName)
 
-    const userId = await userModel.createUser(user)
+    console.log(await user.createUser())
 
     return true
 
@@ -40,7 +34,9 @@ const login = async (email, password)=>{
   try {
     const newEmail = conversions.toEmail(email)
 
-    const doc = await userModel.getUserByEmail(newEmail)
+    const user = new User(newEmail)
+
+    const doc = await user.getUserByEmail()
 
     const validPass = await bcrypt.compare(password, doc[0].password.stringValue)
 
@@ -58,17 +54,14 @@ const login = async (email, password)=>{
   }
 }
 
-const updateUser = async (email, userName)=>{
+const updateUserName = async (email, userName)=>{
   try {
     const newEmail = conversions.toEmail(email)
     const newName = conversions.toName(userName)
 
-    const newUser = {
-      name: newName,
-      date_update: admin.firestore.Timestamp.fromDate(new Date())
-    }
+    const newUser = new User(newEmail, null, newName)
 
-    const updated = await userModel.updateUserByEmail(newEmail, newUser)
+    const updated = await newUser.updateUserByEmail()
 
     if (updated) {
       return true
@@ -81,47 +74,32 @@ const updateUser = async (email, userName)=>{
   }
 }
 
-const forgotPass = async (email)=>{
+const sendForgotPass = async (email)=>{
   try {
     const newEmail = conversions.toEmail(email)
 
-    const user = await userModel.getUserByEmail(newEmail)
+    const user = new User(newEmail)
 
-    if (!user[0]) return false
+    const userSearched = await user.getUserByEmail()
 
-    let now = new Date()
-    now.setHours(now.getHours() + 1)
+    if (!userSearched[0]) return false
 
-    const forgot = {
-      email: user[0].email.stringValue,
-      uuid: uuid(),
-      code: Math.floor(Math.random() * 10000),
-      expire: admin.firestore.Timestamp.fromDate(now)
-    }
+    const forgotCreated = await forgotPassController.createForgotPass(newEmail)
 
-    const id = await userModel.createForgotPass(forgot)
-
-    if (!id){
-      return false
-    }
+    if (!forgotCreated) return false
 
     const emailTemplate = fs.readFileSync('../view/templates/hbs/forgotPass.hbs', "utf8")
 
     const template = hbs.compile(emailTemplate)
 
     const htmlToSend = template({
-      nome: user[0].name.stringValue,
-      code: forgot.code
+      nome: userSearched[0].name.stringValue,
+      code: forgotCreated.code
     })
 
-    mailer.sendMail({
-      to: forgot.email,
-      from: process.env.EMAIL_ADDRESS,
-      subject: 'Recuperação de senha teste',
-      html: htmlToSend
-    }, err =>{
-      return false
-    })
+    const sent = sendEmail(forgotCreated.email, process.env.EMAIL_ADDRESS, 'Esqueceu a senha novo', htmlToSend)
+
+    if (!sent) return false
 
     return true
 
@@ -130,6 +108,23 @@ const forgotPass = async (email)=>{
   }
 }
 
-console.log(await forgotPass('viniciusamirat39@gmail.com'))
+const sendEmail = async (to, from, subject, html)=>{
+  try {
+    
+    mailer.sendMail({
+      to: to,
+      from: from,
+      subject: subject,
+      html: html
+    }, err =>{
+      return false
+    })
 
-export default { createUser, login, updateUser }
+    return true
+
+  } catch (error) {
+    console.log(`Erro ao enviar email: ${error}`)
+  }
+}
+
+export default { createUser, login, updateUserName, sendForgotPass }

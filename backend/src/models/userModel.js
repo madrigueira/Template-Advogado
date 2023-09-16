@@ -1,60 +1,58 @@
-import { db } from '../config/database.js'
+import { db, admin } from '../config/database.js'
 
 const loginsRef = db.collection('users')
-const forgotPass = db.collection('forgotPass')
 
-const createUser = async (user)=>{
-  const doc = await loginsRef.add(user)
+export default class User {
 
-  return doc.id
-}
+  constructor(email, password = null, fullName = null) {
+    this.email = email
+    this.name = fullName
+    this.password = password
+    this.date_include = null
+    this.date_update = null
+  }
 
-const getUserByEmail = async (email)=>{
-  const doc = await loginsRef.where('email', '==', email).get()
+  async createUser() {
 
-  let docs = []
+    this.date_include = admin.firestore.Timestamp.fromDate(new Date())
+    this.date_update = admin.firestore.Timestamp.fromDate(new Date())
 
-  doc.forEach((item)=>{
-    docs.push(item._fieldsProto)
-  })
+    const doc = await loginsRef.add(JSON.parse(JSON.stringify(JSON.parse(JSON.stringify(this)))))
+  
+    return doc.id
+  }
 
-  return docs
-}
+  async getUserByEmail() {
+    const doc = await loginsRef.where('email', '==', this.email).get()
+  
+    let docs = []
+  
+    doc.forEach((item)=>{
+      docs.push(item._fieldsProto)
+    })
+  
+    return docs
+  }
 
-const updateUserByEmail = async (email, newUser)=>{
-  const doc = await loginsRef.where('email', '==', email).get()
+  async updateUserByEmail() {
+    const doc = await loginsRef.where('email', '==', this.email).get()
 
-  let docs = []
+    let docs = []
+  
+    doc.forEach(item => {
+      docs.push(item)
+    })
+  
+    if (docs.length != 1) return false
 
-  doc.forEach(item => {
-    docs.push(item)
-  })
+    const oldUser = await this.getUserByEmail()
 
-  if (docs.length != 1) return false
+    this.password = oldUser[0].password.stringValue
+    this.date_include = oldUser[0].date_include.stringValue
+    this.date_update = admin.firestore.Timestamp.fromDate(new Date())
 
-  await docs[0].ref.update(newUser)
-
-  return true
-}
-
-const createForgotPass = async (forgot)=>{
-  const user = await loginsRef.where('email', '==', forgot.email).get()
-
-  if (!user) return false
-
-  const doc = await forgotPass.add({
-    email: forgot.email,
-    uuid: forgot.uuid,
-    code: forgot.code,
-    expire: forgot.expire
-  })
-
-  return doc.id
-}
-
-export default { 
-  createUser, 
-  getUserByEmail, 
-  updateUserByEmail,
-  createForgotPass
+    await docs[0].ref.update(JSON.parse(JSON.stringify(this)))
+  
+    return true
+  }
 }

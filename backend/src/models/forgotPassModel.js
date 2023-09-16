@@ -1,8 +1,6 @@
 import { db, admin } from '../config/database.js'
 import { v4 as uuid } from 'uuid'
 
-import User from './userModel.js'
-
 const forgotRef = db.collection('forgotPass')
 
 export default class forgotPass {

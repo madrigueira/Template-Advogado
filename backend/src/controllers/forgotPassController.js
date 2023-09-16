@@ -1,17 +1,22 @@
 import ForgotPass from '../models/forgotPassModel.js'
+import userController from './userController.js'
 
 import conversions from '../utils/conversions/conversions.js'
 
-import mailer from '../config/mailer.js'
-import hbs from 'handlebars'
+import Returns from '../models/returns.js'
 
-import fs from 'fs'
+let returnGlobal = new Returns()
 
 const createForgotPass = async (email)=>{
   try {
     const newEmail = conversions.toEmail(email)
 
-    //aqui voce vai ter que pesquisar o usuáriuo para validar se ele existe
+    const user = await userController.getUserByEmail(newEmail)
+
+    if (user.status != 'Success') {
+      returnGlobal.setError('Usuário não encontrado')
+      return returnGlobal.get()
+    }
 
     const forgot = new ForgotPass(newEmail)
 
@@ -23,14 +28,16 @@ const createForgotPass = async (email)=>{
     const id = await forgot.createForgotPass()
 
     if (!id){
-      return false
+      returnGlobal.setError('Erro ao gerar código de validação')
+      return returnGlobal.get()
     } else {
-      return forgot
+      returnGlobal.setSuccess(null, forgot)
+      return returnGlobal.get()
     }
 
-
   } catch (error) {
-    console.log(`Erro ao criar forgotPass: ${error}`)
+    returnGlobal.setError(`Erro ao criar forgotPass: ${error}`)
+    return returnGlobal.get()
   }
 }
 

@@ -21,9 +21,15 @@ const toText = (text)=>{
   return text.trim()
 }
 
+const toCode = (code)=>{
+  let newCode = parseInt(String(code).trim())
+  return newCode
+}
+
 export default {
   toEmail,
   toName,
   toUf,
-  toText
+  toText,
+  toCode
 }

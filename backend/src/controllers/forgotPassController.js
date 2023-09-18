@@ -5,6 +5,8 @@ import conversions from '../utils/conversions/conversions.js'
 
 import Returns from '../models/returns.js'
 
+import { admin } from '../config/database.js'
+
 let returnGlobal = new Returns()
 
 const createForgotPass = async (email)=>{
@@ -41,4 +43,36 @@ const createForgotPass = async (email)=>{
   }
 }
 
-export default { createForgotPass }
+const validateForgotPass = async (email, code)=>{
+  try{
+
+    const forgot = new ForgotPass(email, code)
+
+    const forgots = await forgot.get()
+
+    if (forgots.length != 1) {
+      returnGlobal.setError('Código inválido ou não encontrado')
+      return returnGlobal.get()
+    }
+    
+    const nanoseconds = forgots[0].expire.mapValue.fields._nanoseconds.integerValue || 0
+    const seconds = forgots[0].expire.mapValue.fields._seconds.integerValue || 0
+    
+    const expireDate = new Date(seconds * 1000 + nanoseconds / 1e6);
+    const now = new Date()
+
+    if (expireDate < now) {
+      returnGlobal.setError('Código expirado')
+      return returnGlobal.get()
+    }
+    
+    returnGlobal.setSuccess()
+    return returnGlobal.get()
+
+  } catch (error){
+    returnGlobal.setError(`Erro ao validar código: ${error}`)
+    return returnGlobal.get()
+  }
+}
+
+export default { createForgotPass, validateForgotPass }

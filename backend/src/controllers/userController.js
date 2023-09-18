@@ -120,6 +120,52 @@ const updateUserName = async (email, userName)=>{
   }
 }
 
+const updateUserPass = async (email, code, newUserPass)=>{
+  try {
+    
+    const newEmail = conversions.toEmail(email)
+    const newCode = conversions.toCode(code)
+
+    if ((newCode == null) || (isNaN(newCode) || (newCode == undefined))){
+      returnGlobal.setError('Código inválido')
+      return returnGlobal.get()
+    }
+
+    const user = await getUserByEmail(newEmail)
+
+    if (user.status != 'Success') {
+      returnGlobal.setError('Usuário não encontrado')
+      return returnGlobal.get()
+    }
+
+    const forgot = await forgotPassController.validateForgotPass(newEmail, newCode)
+
+    if (forgot.status != 'Success'){
+      returnGlobal.setError(forgot.message)
+      return returnGlobal.get()
+    }
+
+    const salt = await bcrypt.genSalt(12)
+    const passHash = await bcrypt.hash(newUserPass, salt)
+
+    const newUser = new User(newEmail, passHash)
+    
+    const updated = await newUser.updatePassword()
+
+    if (!updated){
+      returnGlobal.setError('Erro ao atualizar senha')
+      return returnGlobal.get()
+    }
+
+    returnGlobal.setSuccess()
+    return returnGlobal.get()
+
+  } catch (error) {
+    returnGlobal.setError(`Erro ao atualizar senha: ${error}`)
+    return returnGlobal.get()
+  }
+}
+
 const sendForgotPass = async (email)=>{
   try {
     const newEmail = conversions.toEmail(email)
@@ -193,4 +239,6 @@ export default {
   , updateUserName
   , sendForgotPass
   , getUserByEmail 
+  , updateUserPass
 }
+

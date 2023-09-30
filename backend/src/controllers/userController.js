@@ -25,6 +25,13 @@ const createUser = async (email, password, fullName)=>{
 
     const user = new User(newEmail, newPass, newName)
 
+    const emailExist = await user.getUserByEmail()
+
+    if (emailExist.length > 0) {
+      returnGlobal.setError('E-mail já cadastrado')
+      return returnGlobal.get()
+    }
+
     const id = await user.createUser()
 
     if (!id) {
@@ -241,4 +248,3 @@ export default {
   , getUserByEmail 
   , updateUserPass
 }
-

@@ -54,7 +54,14 @@ const validateForgotPass = async (email, code)=>{
       returnGlobal.setError('Código inválido ou não encontrado')
       return returnGlobal.get()
     }
-    
+
+    const used = forgots[0].used.booleanValue || true
+
+    if (used){
+      returnGlobal.setError('Código já utilizado')
+      return returnGlobal.get()
+    }
+  
     const nanoseconds = forgots[0].expire.mapValue.fields._nanoseconds.integerValue || 0
     const seconds = forgots[0].expire.mapValue.fields._seconds.integerValue || 0
     
@@ -66,6 +73,8 @@ const validateForgotPass = async (email, code)=>{
       return returnGlobal.get()
     }
     
+    await forgot.setUsed()
+
     returnGlobal.setSuccess()
     return returnGlobal.get()
 

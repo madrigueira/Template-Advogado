@@ -2,3 +2,40 @@
 
 // SplideJs
 @import "@splidejs/react-splide/css";
+
+.Carousel {
+  .splide {
+    position: relative;
+    height: calc(95vh - 100px);
+    background-color: darken($Cyan, 25);
+
+    .slide {
+      display: flex;
+      height: calc(95vh - 100px);
+      backdrop-filter: aqua;
+
+      .content {
+        @include DivFlex;
+        flex-direction: column;
+        gap: 15px;
+
+        h1 {
+          font-size: 52px;
+          font-weight: 700;
+          color: $White;
+        }
+
+        p {
+          max-width: 45vw;
+          font-size: 15px;
+          font-weight: 200;
+          color: $White;
+        }
+
+        a {
+          color: $White;
+        }
+      }
+    }
+  }
+}

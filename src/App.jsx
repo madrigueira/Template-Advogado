@@ -7,6 +7,9 @@ const App = () => {
     <div className="App">
       <Header />
       <Carousel />
+      <h2>
+        test
+      </h2>
     </div>
   );
 };

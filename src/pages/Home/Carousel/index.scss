@@ -14,6 +14,16 @@
       height: calc(95vh - 100px);
       backdrop-filter: aqua;
 
+      &#slide-2{
+        .content {
+          align-items: end;
+
+          h1, p{
+            text-align: right
+          }
+        }
+      }
+
       .content {
         @include DivFlex;
         flex-direction: column;
@@ -55,6 +65,15 @@
 .Carousel{
   .splide{
     .slide{
+      &#slide-2{
+        .content {
+          align-items: start;
+
+          h1, p{
+            text-align: left
+          }
+        }
+      }
       .content{
         h1{
           font-size: 40px;

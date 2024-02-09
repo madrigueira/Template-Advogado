@@ -11,7 +11,7 @@ const Carousel = () => {
         className="splide"
         options={{ type: "loop", pagination: "inside", drag: "", cover: true }}
       >
-        <SplideSlide className="slide" id="slide-1">
+        <SplideSlide className="slide">
           <img src={carousel_1} alt="" />
           <div className="content">
             <h1>Lorem Ipsum Dolor</h1>
@@ -25,7 +25,7 @@ const Carousel = () => {
             <a href="#">Agendar Agora</a>
           </div>
         </SplideSlide>
-        <SplideSlide className="slide" id="slide-2">
+        <SplideSlide className="slide slide-2">
           <img src={carousel_2} alt="" />
           <div className="content">
             <h1>Lorem Ipsum Dolor</h1>

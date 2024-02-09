@@ -1,8 +1,8 @@
 import React from "react";
 import "./index.scss";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
-import carousel_1 from "../../assets/carousel-1.png";
-import carousel_2 from "../../assets/carousel-2.png";
+import carousel_1 from "../../../assets/carousel-1.png";
+import carousel_2 from "../../../assets/carousel-2.png";
 
 const Carousel = () => {
   return (
@@ -27,7 +27,6 @@ const Carousel = () => {
         </SplideSlide>
         <SplideSlide className="slide">
           <img src={carousel_2} alt="" />
-          <h5>test2</h5>
         </SplideSlide>
       </Splide>
     </div>
